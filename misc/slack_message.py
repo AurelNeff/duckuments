@@ -19,10 +19,11 @@ slack = Slacker(token)
 
 maintainers = """
 <@U0DLXEWRL> (Andrea Censi)
-<@U0MDRAY9X> (Jacopo Tani)
-<@U0DMSBSBG> (Liam Paull)
-<@U6RE1RBR9> (Andrea Daniele)
 """
+# 
+# <@U0MDRAY9X> (Jacopo Tani)
+# <@U0DMSBSBG> (Liam Paull)
+# <@U6RE1RBR9> (Andrea Daniele)
 #
 # maintainers = """
 # <@U0DLXEWRL> (Andrea Censi)
@@ -101,9 +102,9 @@ def disk_usage(path):
 
 import psutil
 
-def check_good_size(min_free_gb=2):
+def check_good_size(path, min_free_gb=2):
 
-    usage = psutil.disk_usage('/')
+    usage = psutil.disk_usage(path)
     in_gb = lambda x: x * 1.0 / (1024*1024*1024)
     free_gb = in_gb(usage.free)
     total_gb = in_gb(usage.total)
@@ -113,7 +114,7 @@ def check_good_size(min_free_gb=2):
     print(s)
 
     if free_gb < min_free_gb:
-        msg = 'Disk space is low. This might stop compilation. \n\n' + s
+        msg = 'Disk space on %s is low. This might stop compilation. \n\n' % path + s
         msg += '\n' + maintainers
 
         slack.chat.post_message(channel, msg, link_names=1)
@@ -124,7 +125,8 @@ def check_good_size(min_free_gb=2):
 
 if __name__ == '__main__':
 
-    check_good_size()
+    check_good_size('/')
+    check_good_size('/mnt/tmp')
     paths = [
     'out/fall2017/pdf/compmake',
     'out/fall2017/prepare/compmake',
